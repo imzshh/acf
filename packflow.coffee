@@ -1,5 +1,9 @@
 _coffeeScriptFiles = [
   'acf'
+  'db'
+  'store'
+  'assignmentManager'
+  'resourceManager'
   'calculator'
 ]
 
