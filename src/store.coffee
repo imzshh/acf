@@ -7,7 +7,7 @@ class Store
     @_dbConnStr = options.dbConnStr
     @_db = db.connect @_dbConnStr
 
-  getAssignments : (resource, callback) ->
+  getAssignmentsOfResource : (resource, callback) ->
     collection = db.getAssignmentsCollection @_db, resource.type
     filter =
       resId : resource.id
@@ -15,7 +15,7 @@ class Store
       if err then return callback err
       callback null, assignments
 
-  setAssignments : (resource, assignments, callback) ->
+  setAssignmentsOfResource : (resource, assignments, callback) ->
     collection = db.getAssignmentsCollection @_db, resource.type
     async.forEachSeries assignments, (assignment, callback) ->
       assignment.resId = resource.id
@@ -40,7 +40,7 @@ class Store
 
     return
 
-  removeAssignments : (resource, assignments, callback) ->
+  removeAssignmentsOfResource : (resource, assignments, callback) ->
     collection = db.getAssignmentsCollection @_db, resource.type
     async.forEachSeries assignments, (assignment, callback) ->
       filter =
@@ -52,5 +52,16 @@ class Store
         callback()
 
     , callback
+
+  getAssignmentsOfAssignee : (assignee, resource, callback) ->
+    collection = db.getAssignmentsCollection @_db, resource.type
+    filter =
+      aseTp : assignee.type
+      aseId : assignee.id
+
+    if resource.id
+      filter.resId = resource.id
+
+    collection.findItems filter, callback
 
 module.exports = Store

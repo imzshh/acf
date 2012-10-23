@@ -1,5 +1,6 @@
 Store = require './store'
 AssignmentManager = require './assignmentManager'
+ResourceManager = require './resourceManager'
 Calculator = require './calculator'
 
 class Acf
@@ -23,16 +24,20 @@ class Acf
     @_calculator.calculate resource, accessorId, callback
 
   # 设置资源的权限分配记录
-  setAssignments : (resource, assignments, callback) ->
-    @_assignmentManager.setAssignments resource, assignments, callback
+  setAssignmentsOfResource : (resource, assignments, callback) ->
+    @_assignmentManager.setAssignmentsOfResource resource, assignments, callback
 
   # 删除资源的权限分配记录
-  removeAssignments : (resource, assignments, callback) ->
-    @_assignmentManager.removeAssignments resource, assignments, callback
+  removeAssignmentsOfResource : (resource, assignments, callback) ->
+    @_assignmentManager.removeAssignmentsOfResource resource, assignments, callback
 
   # 获取资源的权限分配记录，包括继承的记录
-  getAssignments : (resource, callback) ->
-    @_assignmentManager.getAssignments resource, callback
+  getAssignmentsOfResource : (resource, callback) ->
+    @_assignmentManager.getAssignmentsOfResource resource, callback
+
+  # 获取受让人对某一类资源的权限分配记录
+  getAssignmentsOfAssignee : (assignee, resourceType, callback) ->
+    @_assignmentManager.getAssignmentsOfAssignee assignee, resourceType, callback
 
   # 注册一个资源
   registerResource : (options) ->

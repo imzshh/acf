@@ -7,14 +7,13 @@ class Calculator
 
   calculate : (resource, accessorId, callback) ->
     async.waterfall [ (callback) =>
-      @_assignmentManager.getAssignments resource, callback
+      @_assignmentManager.getAssignmentsOfResource resource, callback
 
     , (assignments, callback) =>
       assignmentsGroupByAseTp = __groupAssignmentsByAssigneeType assignments
       filters = @_resourceManager.getFiltersOfResourceType resource.type
 
-      permission = __calculate resource, accessorId, assignmentsGroupByAseTp, filters
-      callback null, permission
+      __calculate resource, accessorId, assignmentsGroupByAseTp, filters, callback
     ], callback
 
 module.exports = Calculator
@@ -30,25 +29,45 @@ __groupAssignmentsByAssigneeType = (assignments) ->
 
   groupedAssignments
 
-__calculate = (resource, accessorId, assignmentsGroupByAseTp, filters) ->
+__calculate = (resource, accessorId, assignmentsGroupByAseTp, filters, callback) ->
+  if not filters or filters.length is 0
+    return callback null, 0
+
   permission = 0
   lastFiltResult = null
   lastPriority = -1
 
-  for filter in filters
-    if lastFiltResult and lastFiltResult.effect and lastPriority isnt filter.priority
-      return permission
+  nextFilterIndex = 0
+  filter = filters[nextFilterIndex]
+  async.until ->
+    not filter or (lastFiltResult and lastFiltResult.effect and lastPriority isnt filter.priority)
+
+  , (callback) ->
+    curFilter = filter
 
     lastPriority = filter.priority
-
-    assignments = assignmentsGroupByAseTp[filter.type]
-    if assignments and assignments.length
-      lastFiltResult = filter.filtrate resource, accessorId, assignments
+    nextFilterIndex++
+    if nextFilterIndex < filters.length
+      filter = filters[nextFilterIndex]
     else
+      filter = null
+
+    assignments = assignmentsGroupByAseTp[curFilter.type]
+
+    if not assignments or assignments.length is 0
       lastFiltResult =
         effect : false
         permission : 0
-    permission |= lastFiltResult.permission
+      return callback()
 
-  permission
+    curFilter.filtrate resource, accessorId, assignments, (err, filtResult) ->
+      if err then return callback err
+
+      lastFiltResult = filtResult
+      permission |= filtResult.permission
+      callback()
+
+  , (err) ->
+    if err then permission is 0
+    callback err, permission
 

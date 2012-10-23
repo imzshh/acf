@@ -19,7 +19,7 @@ resourceManager.registerResource
   type : 1
   filters : [
     type : 1
-    filtrate : (resource, accessorId, assignments) ->
+    filtrate : (resource, accessorId, assignments, callback) ->
       permission = 0
       effect = false
 
@@ -28,7 +28,7 @@ resourceManager.registerResource
           effect = true
           permission |= assignment.permVal
 
-      {effect, permission}
+      callback null, {effect, permission}
   ]
 
 calculator = new Calculator
@@ -60,7 +60,7 @@ describe 'Calculator', ->
       ]
 
       async.waterfall [ (callback) ->
-        store.setAssignments resource, assignments, (err) ->
+        store.setAssignmentsOfResource resource, assignments, (err) ->
           callback err
 
       , (callback) ->

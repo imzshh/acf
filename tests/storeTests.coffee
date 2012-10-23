@@ -7,7 +7,7 @@ store = new Store
   dbConnStr : app.settings.dbConnStr
 
 describe 'Store', ->
-  describe '.setAssignments(resource, assignments, callback)', ->
+  describe '.setAssignmentsOfResource(resource, assignments, callback)', ->
     it 'should save new assignments into datastore', (done) ->
       asrId = app.newObjectID()
       aseId1 = app.newObjectID()
@@ -30,7 +30,7 @@ describe 'Store', ->
       ]
 
       async.waterfall [ (callback) ->
-        store.setAssignments resource, assignments, (err) ->
+        store.setAssignmentsOfResource resource, assignments, (err) ->
           callback err
 
       , (callback) ->
@@ -84,11 +84,11 @@ describe 'Store', ->
       ]
 
       async.waterfall [ (callback) ->
-        store.setAssignments resource, assignments, (err) ->
+        store.setAssignmentsOfResource resource, assignments, (err) ->
           callback err
 
       , (callback) ->
-        store.setAssignments resource, changedAssignments, (err) ->
+        store.setAssignmentsOfResource resource, changedAssignments, (err) ->
           callback err
 
       , (callback) ->
