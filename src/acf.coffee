@@ -23,6 +23,10 @@ class Acf
   calculate : (resource, accessorId, callback) ->
     @_calculator.calculate resource, accessorId, callback
 
+  # 批量计算访问者对资源的最终权限值
+  calculateBatch : (resources, accessorId, callback) ->
+    @_calculator.calculateBatch resources, accessorId, callback
+
   # 设置资源的权限分配记录
   setAssignmentsOfResource : (resource, assignments, callback) ->
     @_assignmentManager.setAssignmentsOfResource resource, assignments, callback

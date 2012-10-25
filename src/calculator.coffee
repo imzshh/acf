@@ -16,6 +16,17 @@ class Calculator
       __calculate resource, accessorId, assignmentsGroupByAseTp, filters, callback
     ], callback
 
+  calculateBatch : (resources, accessorId, callback) ->
+    results = []
+    async.forEachSeries resources, (resource, callback) =>
+      @calculate resource, accessorId, (err, calcResult) ->
+        if err then return callback err
+        results.push calcResult
+        callback()
+
+    , (err) ->
+      callback err, results
+
 module.exports = Calculator
 
 __groupAssignmentsByAssigneeType = (assignments) ->
@@ -31,7 +42,10 @@ __groupAssignmentsByAssigneeType = (assignments) ->
 
 __calculate = (resource, accessorId, assignmentsGroupByAseTp, filters, callback) ->
   if not filters or filters.length is 0
-    return callback null, 0
+    return callback null,
+      type : resource.type
+      id : resource.id
+      perm : 0
 
   permission = 0
   lastFiltResult = null
@@ -69,5 +83,8 @@ __calculate = (resource, accessorId, assignmentsGroupByAseTp, filters, callback)
 
   , (err) ->
     if err then permission is 0
-    callback err, permission
+    callback err,
+      type : resource.type
+      id : resource.id
+      perm : permission
 

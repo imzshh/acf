@@ -64,24 +64,24 @@ describe 'Calculator', ->
           callback err
 
       , (callback) ->
-        calculator.calculate resource, aseId1, (err, permission) ->
+        calculator.calculate resource, aseId1, (err, result) ->
           if err then return callback err
 
-          permission.should.equal 23
+          result.perm.should.equal 23
           callback()
 
       , (callback) ->
-        calculator.calculate resource, aseId2, (err, permission) ->
+        calculator.calculate resource, aseId2, (err, result) ->
           if err then return callback err
 
-          permission.should.equal 32
+          result.perm.should.equal 32
           callback()
 
       , (callback) ->
-        calculator.calculate resource, asrId, (err, permission) ->
+        calculator.calculate resource, asrId, (err, result) ->
           if err then return callback err
 
-          permission.should.equal 0
+          result.perm.should.equal 0
           callback()
         
         ], (err) ->
